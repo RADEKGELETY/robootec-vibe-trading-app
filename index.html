@@ -69,10 +69,8 @@
       mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 86%);
     }
 
-    .hero-watermark {
-      background-image: linear-gradient(160deg, rgba(255,255,255,.92), rgba(255,255,255,.66)), url('assets/hero-watermark.png');
-      background-size: cover;
-      background-position: center;
+    .hero-media {
+      filter: saturate(0.92) brightness(0.94) contrast(1.02);
     }
   </style>
 </head>
@@ -140,8 +138,11 @@
         <div class="reveal relative">
           <div class="absolute -inset-3 rounded-3xl bg-gradient-to-br from-cyan-100/75 to-blue-100/25 blur-2xl"></div>
           <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
-            <div class="hero-watermark h-[260px] sm:h-[300px] lg:h-[340px]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-white/96 via-white/78 to-white/16"></div>
+            <img src="assets/hero-watermark.png" alt="Člověk a AI společně analyzují trading scénáře" class="hero-media h-[280px] w-full object-cover object-center sm:h-[320px] lg:h-[360px]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/94 via-white/72 to-white/12"></div>
+            <div class="absolute left-4 top-4 rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-700 backdrop-blur sm:left-5 sm:top-5">
+              Human + AI decision layer
+            </div>
             <div class="absolute inset-x-0 bottom-0 p-5 sm:p-6">
               <div class="grid gap-3 sm:grid-cols-3">
                 <div class="rounded-xl border border-slate-200 bg-white/95 p-3">
