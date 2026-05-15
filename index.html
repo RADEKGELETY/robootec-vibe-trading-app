@@ -1,581 +1,95 @@
 <!doctype html>
 <html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ROBOOTEC.AI | AI Vibe Trading • Early Access</title>
-  <meta name="description" content="ROBOOTEC.AI přináší AI Vibe Trading: nový způsob, jak tvořit, testovat a řídit trading strategie bez kódu. Early access a předobjednávky pro české retail tradery a investory." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Manrope', 'sans-serif']
-          },
-          boxShadow: {
-            soft: '0 24px 60px -30px rgba(14, 165, 233, 0.30)',
-            card: '0 16px 40px -24px rgba(15, 23, 42, 0.55)'
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="ROBOOTEC.AI AI Vibe Trading App MVP UI demo for no-code strategy creation, benchmark validation and paper trading."
+    />
+    <title>ROBOOTEC.AI | AI Vibe Trading App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+            },
+            boxShadow: {
+              glow: "0 0 32px rgba(34, 211, 238, 0.18)",
+              violetGlow: "0 0 36px rgba(139, 92, 246, 0.2)"
+            }
           }
         }
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: #05070d;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       }
-    };
-  </script>
-  <style>
-    html { scroll-behavior: smooth; }
-    body { text-rendering: optimizeLegibility; }
 
-    .btn {
-      transition: all 0.24s ease;
-    }
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-    .btn:focus-visible {
-      outline: 2px solid rgba(34, 211, 238, 0.65);
-      outline-offset: 2px;
-    }
-    .btn:active {
-      transform: translateY(0) scale(0.99);
-    }
+      button,
+      textarea {
+        font: inherit;
+      }
 
-    .card-hover {
-      text-align: center;
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      border-color: rgba(34, 211, 238, 0.45);
-      box-shadow: 0 24px 58px -30px rgba(8, 145, 178, 0.45);
-    }
+      button {
+        cursor: pointer;
+      }
 
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    .reveal.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      ::selection {
+        background: rgba(103, 232, 249, 0.35);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+      async function bootPreview() {
+        const source = await fetch("./src/App.jsx").then((response) =>
+          response.text()
+        );
+        const patched = source
+          .replace(
+            'import { useEffect, useMemo, useState } from "react";',
+            "const { useEffect, useMemo, useState } = React;"
+          )
+          .replace("export default App;", "window.App = App;");
+        const compiled = Babel.transform(patched, {
+          presets: [["react", { runtime: "classic" }]]
+        }).code;
 
-    .hero-grid {
-      background-image:
-        linear-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
-      background-size: 32px 32px;
-      mask-image: radial-gradient(circle at 50% 24%, black 28%, transparent 84%);
-    }
+        Function("React", compiled)(React);
+        ReactDOM.createRoot(document.getElementById("root")).render(
+          React.createElement(
+            React.StrictMode,
+            null,
+            React.createElement(window.App)
+          )
+        );
+      }
 
-    .hero-image {
-      filter: saturate(1.05) brightness(0.90) contrast(1.08);
-    }
-
-    .flow-pill::after {
-      content: '→';
-      margin-left: 12px;
-      color: rgba(34, 211, 238, 0.85);
-    }
-    .flow-pill:last-child::after {
-      content: '';
-      margin: 0;
-    }
-
-    .box-center {
-      text-align: center;
-    }
-  </style>
-</head>
-<body class="bg-white text-slate-800 antialiased">
-  <header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-lg">
-    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <a href="#hero" class="text-lg font-extrabold tracking-tight text-slate-900">ROBOOTEC<span class="text-cyan-400">.AI</span></a>
-
-      <nav class="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
-        <a href="#ai-vibe" class="transition hover:text-cyan-700">AI Vibe Trading</a>
-        <a href="#problem" class="transition hover:text-cyan-700">Problém</a>
-        <a href="#system" class="transition hover:text-cyan-700">Jak to funguje</a>
-        <a href="#results" class="transition hover:text-cyan-700">Backtest</a>
-        <a href="#pricing" class="transition hover:text-cyan-700">Předobjednávka</a>
-        <a href="#early-access" class="transition hover:text-cyan-700">Early access</a>
-      </nav>
-
-      <a href="#early-access" class="btn hidden rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-400 md:inline-flex">Rezervovat early access</a>
-
-      <button id="menu-toggle" aria-expanded="false" aria-controls="mobile-menu" class="btn inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 md:hidden" type="button">
-        <span class="sr-only">Otevřít menu</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
-      </button>
-    </div>
-
-    <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white md:hidden">
-      <nav class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 text-sm font-medium text-slate-700 sm:px-6">
-        <a href="#ai-vibe" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">AI Vibe Trading</a>
-        <a href="#problem" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">Problém</a>
-        <a href="#system" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">Jak to funguje</a>
-        <a href="#results" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">Backtest</a>
-        <a href="#pricing" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">Předobjednávka</a>
-        <a href="#early-access" class="rounded-lg px-3 py-2 transition hover:bg-slate-50">Early access</a>
-        <a href="#early-access" class="mt-2 inline-flex justify-center rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white">Rezervovat early access</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section id="hero" class="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-cyan-50/80 via-white to-white py-14 sm:py-18 lg:py-24">
-      <div class="pointer-events-none absolute inset-0 hero-grid opacity-70"></div>
-      <div class="pointer-events-none absolute -left-24 top-8 h-64 w-64 rounded-full bg-cyan-200/50 blur-3xl"></div>
-      <div class="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl"></div>
-
-      <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8">
-        <div class="reveal">
-          <span class="inline-flex rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-700">
-            🚀 Nová kategorie tradingu
-          </span>
-          <h1 class="mt-4 text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">AI VIBE TRADING</h1>
-          <p class="mt-2 text-xl font-semibold text-cyan-700 sm:text-2xl">Nový způsob, jak tvořit a testovat trading strategie bez kódu</p>
-          <p class="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
-            Popište, co chcete obchodovat. AI navrhne strategii, systém ji otestuje na datech a ukáže výsledek. Bez programování, bez chaosu, s jasným risk managementem.
-          </p>
-          <p class="mt-4 text-lg font-semibold text-slate-900">Nejdřív test. Až potom signál.</p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#early-access" class="btn rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white hover:bg-cyan-400">Rezervovat early access</a>
-            <a href="#system" class="btn rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Jak funguje AI Vibe Trading</a>
-          </div>
-          <p class="mt-4 text-xs text-slate-500">Technologický nástroj pro podporu rozhodování. Nejde o garanci výnosu.</p>
-        </div>
-
-        <div class="reveal relative">
-          <div class="absolute -inset-3 rounded-3xl bg-gradient-to-br from-cyan-100/90 to-blue-100/45 blur-2xl"></div>
-          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
-            <img src="assets/hero-watermark.png" alt="Člověk a AI společně analyzují trading scénáře" class="hero-image h-[300px] w-full object-cover object-center sm:h-[340px] lg:h-[380px]" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/94 via-white/70 to-transparent"></div>
-            <div class="absolute left-4 top-4 rounded-full border border-white/35 bg-slate-900/45 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur sm:left-5 sm:top-5">Trader</div>
-            <div class="absolute right-4 top-4 rounded-full border border-white/35 bg-slate-900/45 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur sm:right-5 sm:top-5">Umělá inteligence</div>
-            <div class="absolute left-1/2 top-20 -translate-x-1/2 rounded-full border border-white/35 bg-slate-900/50 px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-white backdrop-blur sm:top-24 sm:text-[14px]">ROBOOTEC.AI</div>
-            <div class="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-              <div class="grid gap-3 sm:grid-cols-3">
-                <div class="rounded-xl border border-slate-200 bg-white/85 p-3 box-center">
-                  <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Bez kódu</p>
-                  <p class="mt-1 text-sm font-bold text-slate-900">Popíšete záměr</p>
-                </div>
-                <div class="rounded-xl border border-slate-200 bg-white/85 p-3 box-center">
-                  <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Nejdřív test</p>
-                  <p class="mt-1 text-sm font-bold text-slate-900">Backtest + validace</p>
-                </div>
-                <div class="rounded-xl border border-slate-200 bg-white/85 p-3 box-center">
-                  <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Kontrola rizika</p>
-                  <p class="mt-1 text-sm font-bold text-slate-900">Limity + audit trail</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="ai-vibe" class="py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-4xl">
-          <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">AI Vibe Trading</p>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Co je AI Vibe Trading?</h2>
-          <p class="mt-4 text-lg text-slate-600">AI Vibe Trading znamená, že místo ručního skládání indikátorů nebo programování strategie jednoduše popíšete, co chcete obchodovat. ROBOOTEC.AI z vašeho záměru vytvoří pravidla, otestuje je na historických datech, porovná benchmark, vyhodnotí riziko a vrátí srozumitelný výsledek.</p>
-          <p class="mt-4 font-semibold text-cyan-700">Popíšete záměr. AI vytvoří strategii. Systém ji otestuje.</p>
-          <div class="mt-8 flex flex-wrap items-center gap-y-3 text-sm font-semibold text-cyan-700">
-            <span class="flow-pill rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2">Prompt</span>
-            <span class="flow-pill rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2">Strategie</span>
-            <span class="flow-pill rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2">Backtest</span>
-            <span class="flow-pill rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2">Výsledek</span>
-          </div>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Popíšete záměr</h3>
-            <p class="mt-3 text-slate-600">Například: Chci strategii pro Nasdaq, která obchoduje pullbacky a hlídá sentiment.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">AI vytvoří strategii</h3>
-            <p class="mt-3 text-slate-600">Z návrhu vzniknou konkrétní pravidla, indikátory, vstupy, výstupy a risk parametry.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Systém ji otestuje</h3>
-            <p class="mt-3 text-slate-600">Backtest, walk-forward validace, benchmark a audit trail ukážou, jestli strategie dává smysl.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="comparison" class="border-y border-slate-200 bg-slate-50/70 py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">Nová kategorie</p>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Trading dříve vs AI Vibe Trading</h2>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-2">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Klasický retail trading</h3>
-            <ul class="mt-5 space-y-2 text-slate-600">
-              <li>• ruční analýza</li>
-              <li>• emoce</li>
-              <li>• nápady bez testu</li>
-              <li>• složité nástroje</li>
-              <li>• black-box signály</li>
-            </ul>
-          </article>
-
-          <article class="card-hover reveal rounded-2xl border border-cyan-400/45 bg-gradient-to-b from-cyan-500/10 to-white p-6 shadow-soft">
-            <div class="inline-flex rounded-full border border-cyan-300/40 bg-cyan-400/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-700">AI Vibe Trading</div>
-            <h3 class="mt-3 text-xl font-bold text-slate-900">AI Vibe Trading</h3>
-            <ul class="mt-5 space-y-2 text-slate-700">
-              <li>• AI návrh strategie</li>
-              <li>• data-driven rozhodování</li>
-              <li>• automatický backtest</li>
-              <li>• no-code workflow</li>
-              <li>• audit trail</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="problem" class="py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-4xl">
-          <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">Problém retail trhu</p>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Trader dělá vše správně. Přesto často končí ve ztrátě.</h2>
-          <p class="mt-4 text-lg text-slate-600">Ne kvůli nedostatku snahy. Kvůli přetížení informacemi, emočním rozhodnutím a strategiím bez důkladné validace.</p>
-          <p class="mt-4 text-slate-600">Problém není jen disciplína. Problém je chybějící systém, který propojí data, validaci a risk management do jednoho rozhodovacího workflow.</p>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Chaos v datech</h3>
-            <p class="mt-3 text-slate-600">Grafy, zprávy, sentiment, makro. Vše důležité, ale bez jednoho rámce pro rozhodnutí.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Emoce ve špatnou chvíli</h3>
-            <p class="mt-3 text-slate-600">Po ztrátě strach, po zisku euforie. Bez systému se plán láme přesně v klíčovém momentu.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Nápad bez testu</h3>
-            <p class="mt-3 text-slate-600">Bez backtestu, walk-forward validace a benchmarku zůstává i dobrý nápad jen dojmem.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="system" class="border-y border-slate-200 bg-slate-50/70 py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">Jak to funguje</p>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Od nápadu ke strategii za pár kroků</h2>
-          <p class="mt-4 text-slate-600">Bez kódu. Bez chaosu. Bez dojmů.</p>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">01 — Zadání záměru</p><p class="mt-3 text-sm text-slate-600">Popíšete trh, styl obchodování, riziko a očekávání.</p></article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">02 — AI návrh strategie</p><p class="mt-3 text-sm text-slate-600">AI převede záměr do pravidel, indikátorů a vstupních/výstupních podmínek.</p></article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">03 — Backtest a validace</p><p class="mt-3 text-sm text-slate-600">Systém strategii otestuje na historických datech, porovná benchmark a vyhodnotí robustnost.</p></article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">04 — Risk management</p><p class="mt-3 text-sm text-slate-600">Výstup zahrnuje velikost rizika, drawdown, limity a pravidla výstupu.</p></article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">05 — Audit trail</p><p class="mt-3 text-sm text-slate-600">Každý krok je zpětně vysvětlitelný.</p></article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-card"><p class="text-xs font-bold tracking-wider text-cyan-700">06 — Automatizace workflow</p><p class="mt-3 text-sm text-slate-600">V dalších fázích může uživatel propojit produkt s brokerem a automatizovat vybrané procesy podle vlastního nastavení.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="results" class="py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-4xl">
-          <div class="mb-4 flex flex-wrap gap-2">
-            <span class="rounded-full border border-cyan-400/35 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-700">Proof of Work</span>
-            <span class="rounded-full border border-blue-400/35 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-700">Backtest snapshot</span>
-            <span class="rounded-full border border-amber-400/35 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-700">Nejde o garanci výnosu</span>
-          </div>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Top 3 strategie: Bitcoin, Gold, NASDAQ</h2>
-          <p class="mt-4 text-slate-600">Tyto výsledky slouží jako ukázka testovací pipeline a proof-of-work přístupu. Nejde o garanci budoucí výkonnosti.</p>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-emerald-400/35 bg-white/95 p-6 shadow-card">
-            <div class="flex items-start justify-between gap-3"><p class="text-sm font-semibold text-slate-600">#1 Bitcoin</p><span class="rounded-full bg-emerald-500/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">Nejvýkonnější</span></div>
-            <p class="mt-1 text-sm text-slate-500">S25 • Bollinger mean reversion</p>
-            <p class="mt-3 text-4xl font-extrabold text-emerald-600">+62,69 %</p>
-            <div class="mt-5 grid grid-cols-2 gap-2">
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Win rate</p><p class="text-sm font-bold text-slate-900">80,00 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Drawdown</p><p class="text-sm font-bold text-slate-900">20,11 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Return USD</p><p class="text-sm font-bold text-slate-900">$ 62.695</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Final</p><p class="text-sm font-bold text-slate-900">$ 162.695</p></div>
-            </div>
-            <p class="mt-4 text-xs text-slate-500">Historický test / simulace</p>
-          </article>
-
-          <article class="card-hover reveal rounded-2xl border border-cyan-400/35 bg-white/95 p-6 shadow-card">
-            <div class="flex items-start justify-between gap-3"><p class="text-sm font-semibold text-slate-600">#2 Gold</p><span class="rounded-full bg-cyan-200/50 px-2.5 py-1 text-[11px] font-semibold text-cyan-700">Stabilní výkon</span></div>
-            <p class="mt-1 text-sm text-slate-500">S13 • EMA crossover</p>
-            <p class="mt-3 text-4xl font-extrabold text-emerald-600">+21,88 %</p>
-            <div class="mt-5 grid grid-cols-2 gap-2">
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Win rate</p><p class="text-sm font-bold text-slate-900">50,00 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Drawdown</p><p class="text-sm font-bold text-slate-900">13,08 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Return USD</p><p class="text-sm font-bold text-slate-900">$ 21.876</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Final</p><p class="text-sm font-bold text-slate-900">$ 121.876</p></div>
-            </div>
-            <p class="mt-4 text-xs text-slate-500">Historický test / simulace</p>
-          </article>
-
-          <article class="card-hover reveal rounded-2xl border border-blue-400/35 bg-white/95 p-6 shadow-card">
-            <div class="flex items-start justify-between gap-3"><p class="text-sm font-semibold text-slate-600">#3 NASDAQ / US Stocks</p><span class="rounded-full bg-blue-500/20 px-2.5 py-1 text-[11px] font-semibold text-blue-700">Konzistentní</span></div>
-            <p class="mt-1 text-sm text-slate-500">S20 • RSI mean reversion</p>
-            <p class="mt-3 text-4xl font-extrabold text-emerald-600">+15,37 %</p>
-            <div class="mt-5 grid grid-cols-2 gap-2">
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Win rate</p><p class="text-sm font-bold text-slate-900">64,67 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Drawdown</p><p class="text-sm font-bold text-slate-900">13,81 %</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Return USD</p><p class="text-sm font-bold text-slate-900">$ 15.372</p></div>
-              <div class="rounded-lg border border-slate-200 bg-slate-50 p-2.5"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Final</p><p class="text-sm font-bold text-slate-900">$ 115.372</p></div>
-            </div>
-            <p class="mt-4 text-xs text-slate-500">Historický test / simulace</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="pricing" class="border-y border-slate-200 bg-slate-50/70 py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-4xl">
-          <span class="inline-flex rounded-full border border-cyan-400/35 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-700">Český trh jako první testovací komunita</span>
-          <h2 class="mt-4 text-3xl font-extrabold text-slate-900 sm:text-4xl">Předobjednávka AI Vibe Trading členství</h2>
-          <p class="mt-4 text-slate-600">Pomozte nám ověřit zájem na českém trhu a získejte přednostní přístup k produktu před veřejným spuštěním.</p>
-          <p class="mt-3 text-sm font-semibold text-cyan-700">Cílem první fáze je získat 1 000 zájemců před kampaní HitHit / Kickstarter.</p>
-          <div class="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600 box-center">
-            <p class="font-semibold text-slate-800">Platební model před spuštěním:</p>
-            <p class="mt-1">První platba proběhne nyní při rezervaci. Další měsíční platby až po spuštění produktu.</p>
-            <p class="mt-2">Běžná cena po spuštění: <span class="font-semibold text-slate-900">19 900 Kč + 1 990 Kč / měsíc</span>.</p>
-          </div>
-        </div>
-
-        <div class="mt-10 grid gap-5 lg:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <p class="text-sm font-semibold text-cyan-700">AI VIBE EARLY 100</p>
-            <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Limit prvních 100</p>
-            <p class="mt-3 text-4xl font-extrabold text-slate-900">990 Kč<span class="text-base font-semibold text-slate-500"> / měsíc</span></p>
-            <ul class="mt-6 space-y-2 text-sm text-slate-600">
-              <li>• early access</li>
-              <li>• přednostní vstup</li>
-              <li>• komunitní update z vývoje</li>
-            </ul>
-            <a href="#early-access" class="btn mt-7 inline-flex rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">Rezervovat EARLY 100</a>
-          </article>
-
-          <article class="card-hover reveal relative rounded-2xl border-2 border-cyan-400/50 bg-gradient-to-b from-cyan-500/10 to-white p-6 shadow-soft">
-            <span class="absolute -top-3 left-6 rounded-full bg-cyan-600 px-3 py-1 text-xs font-bold text-white">Nejčastější volba</span>
-            <p class="text-sm font-semibold text-cyan-700">AI VIBE STANDARD</p>
-            <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Pro další zájemce</p>
-            <p class="mt-3 text-4xl font-extrabold text-slate-900">1 490 Kč<span class="text-base font-semibold text-slate-500"> / měsíc</span></p>
-            <ul class="mt-6 space-y-2 text-sm text-slate-700">
-              <li>• early access</li>
-              <li>• přednostní vstup</li>
-              <li>• komunitní update z vývoje</li>
-            </ul>
-            <a href="#early-access" class="btn mt-7 inline-flex rounded-full bg-cyan-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-cyan-500">Rezervovat STANDARD</a>
-          </article>
-
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <p class="text-sm font-semibold text-cyan-700">AI VIBE VIP BETA</p>
-            <p class="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Limit 100 míst</p>
-            <p class="mt-3 text-4xl font-extrabold text-slate-900">1 990 Kč<span class="text-base font-semibold text-slate-500"> / měsíc</span></p>
-            <ul class="mt-6 space-y-2 text-sm text-slate-600">
-              <li>• early access</li>
-              <li>• přednostní vstup</li>
-              <li>• komunitní update z vývoje</li>
-            </ul>
-            <a href="#early-access" class="btn mt-7 inline-flex rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">Rezervovat VIP BETA</a>
-          </article>
-        </div>
-
-        <div class="reveal mt-8 rounded-2xl border border-cyan-200 bg-gradient-to-r from-cyan-50 via-white to-blue-50 p-5 shadow-card sm:p-6">
-          <div class="grid gap-3 md:grid-cols-3">
-            <div class="rounded-xl border border-slate-200 bg-white/90 p-4 box-center">
-              <p class="text-xs font-semibold uppercase tracking-wider text-cyan-700">Společné podmínky</p>
-              <p class="mt-2 text-sm font-semibold text-slate-800">První platba nyní</p>
-              <p class="text-sm text-slate-600">Další při oficiálním spuštění</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white/90 p-4 box-center">
-              <p class="text-xs font-semibold uppercase tracking-wider text-cyan-700">Oficiální spuštění</p>
-              <p class="mt-2 text-lg font-bold text-slate-900">12 / 2026</p>
-              <p class="text-sm text-slate-600">Start plného provozu produktu</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white/90 p-4 box-center">
-              <p class="text-xs font-semibold uppercase tracking-wider text-cyan-700">VIP Beta</p>
-              <p class="mt-2 text-lg font-bold text-slate-900">9 / 2026</p>
-              <p class="text-sm text-slate-600">Možnost zdarma testování pro VIP</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="why-preorder" class="py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal max-w-4xl">
-          <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">Validace trhu</p>
-          <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Proč spouštíme předobjednávky?</h2>
-          <p class="mt-4 text-slate-600">Nechceme stavět produkt za zavřenými dveřmi. Chceme nejdřív ověřit, že retail tradeři a investoři opravdu chtějí AI nástroj, který jim pomůže tvořit, testovat a řídit strategie bez kódu.</p>
-        </div>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-3">
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Ověření trhu</h3>
-            <p class="mt-3 text-slate-600">Zjistíme, o jaké funkce mají první uživatelé největší zájem.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Komunita před launch</h3>
-            <p class="mt-3 text-slate-600">První tradeři pomohou formovat produkt ještě před crowdfunding kampaní.</p>
-          </article>
-          <article class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
-            <h3 class="text-xl font-bold text-slate-900">Rychlejší MVP</h3>
-            <p class="mt-3 text-slate-600">Předobjednávky nám pomohou urychlit vývoj a připravit veřejný launch.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="early-access" class="border-y border-slate-200 bg-gradient-to-b from-cyan-50/70 to-white py-16 sm:py-20 lg:py-24">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal grid gap-8 rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-soft sm:p-10 lg:grid-cols-2">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-wider text-cyan-700">Early access</p>
-            <h2 class="mt-3 text-3xl font-extrabold text-slate-900 sm:text-4xl">Staňte se součástí první AI Vibe Trading komunity v Česku</h2>
-            <p class="mt-4 text-slate-600">Přidejte se mezi první tradery a investory, kteří otestují ROBOOTEC.AI před veřejnou crowdfunding kampaní.</p>
-            <p class="mt-2 text-sm text-slate-500">První platba se provede při rezervaci. Další platby až po oficiálním spuštění produktu.</p>
-            <p class="mt-4 font-semibold text-cyan-700">Nejdřív test. Až potom signál.</p>
-            <div class="mt-7 flex flex-wrap gap-3">
-              <a href="#waitlist-form" class="btn rounded-full bg-cyan-600 px-6 py-3 text-sm font-semibold text-white hover:bg-cyan-500">Rezervovat early access</a>
-              <a href="mailto:radek@robootec.ai" class="btn rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">Napsat e-mail</a>
-            </div>
-          </div>
-
-          <div>
-            <form id="waitlist-form" class="space-y-4 rounded-2xl border border-slate-200 bg-white p-5" novalidate>
-              <div>
-                <label for="name" class="mb-1 block text-sm font-medium text-slate-700">Jméno</label>
-                <input id="name" name="name" type="text" autocomplete="name" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none" placeholder="Vaše jméno" required />
-              </div>
-              <div>
-                <label for="email" class="mb-1 block text-sm font-medium text-slate-700">Email</label>
-                <input id="email" name="email" type="email" autocomplete="email" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none" placeholder="vas@email.cz" required />
-              </div>
-              <div>
-                <label for="plan" class="mb-1 block text-sm font-medium text-slate-700">Vybraný plán</label>
-                <select id="plan" name="plan" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 focus:border-cyan-400 focus:outline-none" required>
-                  <option value="">Vyberte plán</option>
-                  <option>AI VIBE EARLY 100 — 990 Kč / měsíc</option>
-                  <option>AI VIBE STANDARD — 1 490 Kč / měsíc</option>
-                  <option>AI VIBE VIP BETA — 1 990 Kč / měsíc</option>
-                </select>
-              </div>
-              <div>
-                <label for="note" class="mb-1 block text-sm font-medium text-slate-700">Poznámka</label>
-                <textarea id="note" name="note" rows="3" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none" placeholder="Volitelné"></textarea>
-              </div>
-              <button type="submit" class="btn w-full rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-500">Odeslat zájem</button>
-              <p id="form-message" class="hidden rounded-xl border px-3 py-2 text-sm" aria-live="polite"></p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="disclaimer" class="py-10">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-5 text-sm text-slate-500 box-center">
-          ROBOOTEC.AI je technologický nástroj pro podporu rozhodování, testování a automatizaci trading workflow. Nejde o investiční doporučení ani garanci výnosu. Prezentované výsledky jsou historické testy / simulace a nezaručují budoucí výkonnost.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="border-t border-slate-200 bg-white py-8">
-    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 text-sm text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-      <p>© <span id="year"></span> ROBOOTEC.AI</p>
-      <p>Kontakt: <a href="mailto:radek@robootec.ai" class="text-cyan-700 hover:text-cyan-600">radek@robootec.ai</a></p>
-    </div>
-  </footer>
-
-  <script>
-    document.querySelectorAll('a[href]').forEach((link) => {
-      const href = (link.getAttribute('href') || '').trim();
-      if (!href || href.startsWith('#') || href.startsWith('mailto:')) return;
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer external');
-    });
-
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (menuToggle && mobileMenu) {
-      menuToggle.addEventListener('click', () => {
-        const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-        menuToggle.setAttribute('aria-expanded', String(!expanded));
-        mobileMenu.classList.toggle('hidden');
+      bootPreview().catch((error) => {
+        document.getElementById("root").innerHTML =
+          '<pre style="color:#fca5a5;padding:24px;white-space:pre-wrap">' +
+          error.stack +
+          "</pre>";
       });
-
-      mobileMenu.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', () => {
-          mobileMenu.classList.add('hidden');
-          menuToggle.setAttribute('aria-expanded', 'false');
-        });
-      });
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('show');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll('.reveal').forEach((el, i) => {
-      el.style.transitionDelay = `${(i % 6) * 70}ms`;
-      observer.observe(el);
-    });
-
-    const form = document.getElementById('waitlist-form');
-    const formMessage = document.getElementById('form-message');
-
-    if (form && formMessage) {
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-
-        const nameInput = form.querySelector('#name');
-        const emailInput = form.querySelector('#email');
-        const planInput = form.querySelector('#plan');
-        const name = nameInput ? nameInput.value.trim() : '';
-        const email = emailInput ? emailInput.value.trim() : '';
-        const plan = planInput ? planInput.value.trim() : '';
-        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-        if (!name || !email || !plan || !emailValid) {
-          formMessage.className = 'rounded-xl border border-rose-400/35 bg-rose-500/10 px-3 py-2 text-sm text-rose-200';
-          formMessage.textContent = 'Prosím vyplňte jméno, platný email a vyberte plán.';
-          formMessage.classList.remove('hidden');
-          return;
-        }
-
-        form.reset();
-        formMessage.className = 'rounded-xl border border-emerald-400/35 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700';
-        formMessage.textContent = 'Děkujeme. Váš zájem jsme zaznamenali.';
-        formMessage.classList.remove('hidden');
-      });
-    }
-
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
